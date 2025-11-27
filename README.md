@@ -1,6 +1,6 @@
-# JMeasurement Protocol GA4
+# jmeasurement-protocol-ga4
 
-A lightweight Java library for sending events to Google Analytics 4 using the Measurement Protocol.
+A lightweight Java library for sending analytics events through [Google Analytics 4 Measurement Protocol](https://developers.google.com/analytics/devguides/collection/protocol/ga4).
 
 ## Features
 
@@ -9,28 +9,51 @@ A lightweight Java library for sending events to Google Analytics 4 using the Me
 - ⚡ Async and sync event sending
 - 🎯 Built-in support for common event types (page views, screen views, custom events)
 - 🔧 Customizable system information reporting
-- 📦 Zero dependencies except Jackson (for JSON)
-- ☕ Java 11+ compatible
+- ☕ Java 21+ compatible
 
 ## Installation
 
-### Gradle
+### Using JitPack
+
+[![](https://jitpack.io/v/nicolabeghin/jmeasurement-protocol-ga4.svg)](https://jitpack.io/#nicolabeghin/jmeasurement-protocol-ga4)
+
+#### Gradle
+
+Add JitPack repository and dependency to your `build.gradle`:
 
 ```gradle
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
 dependencies {
-    implementation 'com.google.ga4.mp:jmeasurement-protocol-ga4:1.0.0'
+    implementation 'com.github.nicolabeghin:jmeasurement-protocol-ga4:1.0.0'
 }
 ```
 
-### Maven
+#### Maven
+
+Add JitPack repository and dependency to your `pom.xml`:
 
 ```xml
-<dependency>
-    <groupId>com.google.ga4.mp</groupId>
-    <artifactId>jmeasurement-protocol-ga4</artifactId>
-    <version>1.0.0</version>
-</dependency>
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>com.github.nicolabeghin</groupId>
+        <artifactId>jmeasurement-protocol-ga4</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+</dependencies>
 ```
+
+See all available versions at [JitPack](https://jitpack.io/#nicolabeghin/jmeasurement-protocol-ga4)
 
 ## Quick Start
 
@@ -180,7 +203,7 @@ All builders support:
 
 ## Requirements
 
-- Java 11 or higher
+- Java 21 or higher
 - Jackson library (included as dependency)
 
 ## License
