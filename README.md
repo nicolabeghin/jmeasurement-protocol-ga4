@@ -9,7 +9,7 @@ A lightweight Java library for sending analytics events through [Google Analytic
 - ⚡ Async and sync event sending
 - 🎯 Built-in support for common event types (page views, screen views, custom events)
 - 🔧 Customizable system information reporting
-- ☕ Java 21+ compatible
+- ☕ Java 11+ compatible
 
 ## Installation
 
@@ -203,7 +203,7 @@ All builders support:
 
 ## Requirements
 
-- Java 21 or higher
+- Java 11 or higher
 - Jackson library (included as dependency)
 
 ## License
