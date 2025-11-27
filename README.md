@@ -2,6 +2,10 @@
 
 A lightweight Java library for sending analytics events through [Google Analytics 4 Measurement Protocol](https://developers.google.com/analytics/devguides/collection/protocol/ga4).
 
+![Build and Test](https://github.com/nicolabeghin/jmeasurement-protocol-ga4/actions/workflows/build.yml/badge.svg)
+[![JitPack](https://jitpack.io/v/nicolabeghin/jmeasurement-protocol-ga4.svg)](https://jitpack.io/#nicolabeghin/jmeasurement-protocol-ga4)
+[![Downloads](https://jitpack.io/v/nicolabeghin/jmeasurement-protocol-ga4/month.svg)](https://jitpack.io/#nicolabeghin/jmeasurement-protocol-ga4)
+
 ## Features
 
 - 🚀 Simple, fluent API for GA4 event tracking
@@ -14,8 +18,6 @@ A lightweight Java library for sending analytics events through [Google Analytic
 ## Installation
 
 ### Using JitPack
-
-[![](https://jitpack.io/v/nicolabeghin/jmeasurement-protocol-ga4.svg)](https://jitpack.io/#nicolabeghin/jmeasurement-protocol-ga4)
 
 #### Gradle
 
