@@ -1,0 +1,30 @@
+plugins {
+    id 'java-library'
+}
+
+group = 'com.google.ga4.mp'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Jackson for JSON processing
+    api 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
+
+    // Apache Commons Lang3 for system utilities
+    api 'org.apache.commons:commons-lang3:3.18.0'
+
+    // Testing dependencies
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+}
+
+test {
+    useJUnitPlatform()
+}
