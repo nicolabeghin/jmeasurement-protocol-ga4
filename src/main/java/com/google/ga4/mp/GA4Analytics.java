@@ -37,6 +37,7 @@ public class GA4Analytics {
     private final String appVersion;
     private final String userAgent;
     private final boolean debugMode;
+    private final String validationBehavior;
     private final ExecutorService executor;
     private final HttpClient httpClient;
     private final Map<String, Object> sessionParams;
@@ -45,11 +46,12 @@ public class GA4Analytics {
     private GA4Analytics(Builder builder) {
         this.measurementId = builder.measurementId;
         this.apiSecret = builder.apiSecret;
-        this.clientId = builder.clientId != null ? builder.clientId : UUID.randomUUID().toString();
+        this.clientId = builder.clientId != null ? builder.clientId : generateClientId();
         this.appName = builder.appName;
         this.appVersion = builder.appVersion;
         this.userAgent = builder.userAgent;
         this.debugMode = builder.debugMode;
+        this.validationBehavior = builder.validationBehavior;
         this.systemInfoProvider = builder.systemInfoProvider != null ? builder.systemInfoProvider : new ApacheCommonsSystemInfoProvider();
         this.executor = Executors.newFixedThreadPool(2);
         this.httpClient = HttpClient.newBuilder()
@@ -95,6 +97,11 @@ public class GA4Analytics {
             Map<String, Object> payload = new HashMap<>();
             payload.put("client_id", clientId);
 
+            // Add validation behavior if specified
+            if (validationBehavior != null && !validationBehavior.isEmpty()) {
+                payload.put("validation_behavior", validationBehavior);
+            }
+
             // Add user properties
             Map<String, Object> userProperties = new HashMap<>();
             userProperties.put("app_name", createValueMap(appName));
@@ -102,6 +109,22 @@ public class GA4Analytics {
             userProperties.put("os_name", createValueMap(systemInfoProvider.getOsName()));
             userProperties.put("os_version", createValueMap(systemInfoProvider.getOsVersion()));
             payload.put("user_properties", userProperties);
+
+            // Add device info
+            Map<String, Object> deviceInfo = new HashMap<>();
+            addIfNotNull(deviceInfo, "category", systemInfoProvider.getDeviceCategory());
+            addIfNotNull(deviceInfo, "language", systemInfoProvider.getLanguage());
+            addIfNotNull(deviceInfo, "screen_resolution", systemInfoProvider.getScreenResolution());
+            addIfNotNull(deviceInfo, "operating_system", systemInfoProvider.getOsName());
+            addIfNotNull(deviceInfo, "operating_system_version", systemInfoProvider.getOsVersion());
+            addIfNotNull(deviceInfo, "model", systemInfoProvider.getDeviceModel());
+            addIfNotNull(deviceInfo, "brand", systemInfoProvider.getDeviceBrand());
+            addIfNotNull(deviceInfo, "browser", systemInfoProvider.getBrowser());
+            addIfNotNull(deviceInfo, "browser_version", systemInfoProvider.getBrowserVersion());
+
+            if (!deviceInfo.isEmpty()) {
+                payload.put("device", deviceInfo);
+            }
 
             // Create event
             Map<String, Object> event = new HashMap<>();
@@ -139,6 +162,26 @@ public class GA4Analytics {
                 // In debug mode, log the validation response
                 LOG.log(Level.INFO, "GA4 Debug Response (event: {0}): {1}",
                         new Object[]{eventName, response.body()});
+
+                // Parse and log validation messages if present
+                try {
+                    Map<String, Object> debugResponse = objectMapper.readValue(response.body(), Map.class);
+                    if (debugResponse.containsKey("validationMessages")) {
+                        Object validationMessages = debugResponse.get("validationMessages");
+                        if (validationMessages instanceof java.util.List) {
+                            java.util.List<?> messages = (java.util.List<?>) validationMessages;
+                            if (!messages.isEmpty()) {
+                                LOG.log(Level.WARNING, "GA4 Validation Messages for event ''{0}'': {1}",
+                                        new Object[]{eventName, objectMapper.writeValueAsString(messages)});
+                            } else {
+                                LOG.log(Level.INFO, "GA4 Validation passed for event ''{0}'' - no validation messages",
+                                        eventName);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    LOG.log(Level.FINE, "Could not parse debug response for validation messages", e);
+                }
             }
 
             if (response.statusCode() < 200 || response.statusCode() >= 300) {
@@ -156,6 +199,22 @@ public class GA4Analytics {
         return map;
     }
 
+    private void addIfNotNull(Map<String, Object> map, String key, String value) {
+        if (value != null && !value.isEmpty()) {
+            map.put(key, value);
+        }
+    }
+
+    /**
+     * Generates a client ID in the format required by GA4: <number>.<number>
+     * Uses current timestamp and a random number for uniqueness
+     */
+    private static String generateClientId() {
+        long timestamp = System.currentTimeMillis();
+        long random = (long) (Math.random() * 1000000000);
+        return timestamp + "." + random;
+    }
+
     public void shutdown() {
         executor.shutdown();
     }
@@ -168,6 +227,7 @@ public class GA4Analytics {
         private String appVersion;
         private String userAgent;
         private boolean debugMode = false;
+        private String validationBehavior;
         private SystemInfoProvider systemInfoProvider;
 
         public Builder withMeasurementId(String measurementId) {
@@ -202,6 +262,11 @@ public class GA4Analytics {
 
         public Builder withDebugMode(boolean debugMode) {
             this.debugMode = debugMode;
+            return this;
+        }
+
+        public Builder withValidationBehavior(String validationBehavior) {
+            this.validationBehavior = validationBehavior;
             return this;
         }
 
