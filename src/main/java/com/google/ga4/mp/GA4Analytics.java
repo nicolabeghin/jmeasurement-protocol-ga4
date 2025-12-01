@@ -103,6 +103,22 @@ public class GA4Analytics {
             userProperties.put("os_version", createValueMap(systemInfoProvider.getOsVersion()));
             payload.put("user_properties", userProperties);
 
+            // Add device info
+            Map<String, Object> deviceInfo = new HashMap<>();
+            addIfNotNull(deviceInfo, "category", systemInfoProvider.getDeviceCategory());
+            addIfNotNull(deviceInfo, "language", systemInfoProvider.getLanguage());
+            addIfNotNull(deviceInfo, "screen_resolution", systemInfoProvider.getScreenResolution());
+            addIfNotNull(deviceInfo, "operating_system", systemInfoProvider.getOsName());
+            addIfNotNull(deviceInfo, "operating_system_version", systemInfoProvider.getOsVersion());
+            addIfNotNull(deviceInfo, "model", systemInfoProvider.getDeviceModel());
+            addIfNotNull(deviceInfo, "brand", systemInfoProvider.getDeviceBrand());
+            addIfNotNull(deviceInfo, "browser", systemInfoProvider.getBrowser());
+            addIfNotNull(deviceInfo, "browser_version", systemInfoProvider.getBrowserVersion());
+
+            if (!deviceInfo.isEmpty()) {
+                payload.put("device", deviceInfo);
+            }
+
             // Create event
             Map<String, Object> event = new HashMap<>();
             event.put("name", eventName);
@@ -154,6 +170,12 @@ public class GA4Analytics {
         Map<String, String> map = new HashMap<>();
         map.put("value", value);
         return map;
+    }
+
+    private void addIfNotNull(Map<String, Object> map, String key, String value) {
+        if (value != null && !value.isEmpty()) {
+            map.put(key, value);
+        }
     }
 
     public void shutdown() {

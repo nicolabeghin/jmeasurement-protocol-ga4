@@ -84,6 +84,64 @@ class GA4AnalyticsTest {
     }
 
     @Test
+    void testBuilderWithCustomSystemInfoProviderWithDeviceInfo() {
+        SystemInfoProvider customProvider = new SystemInfoProvider() {
+            @Override
+            public String getOsName() {
+                return "Android";
+            }
+
+            @Override
+            public String getOsVersion() {
+                return "14";
+            }
+
+            @Override
+            public String getDeviceCategory() {
+                return "mobile";
+            }
+
+            @Override
+            public String getLanguage() {
+                return "en-US";
+            }
+
+            @Override
+            public String getScreenResolution() {
+                return "1080x2400";
+            }
+
+            @Override
+            public String getDeviceModel() {
+                return "Pixel 9 Pro";
+            }
+
+            @Override
+            public String getDeviceBrand() {
+                return "Google";
+            }
+
+            @Override
+            public String getBrowser() {
+                return "Chrome";
+            }
+
+            @Override
+            public String getBrowserVersion() {
+                return "120.0.6099.144";
+            }
+        };
+
+        analytics = GA4Analytics.builder()
+                .withMeasurementId("G-TEST123")
+                .withApiSecret("test-secret")
+                .withSystemInfoProvider(customProvider)
+                .build();
+
+        assertNotNull(analytics);
+    }
+
+    @Test
     void testDefaultUserAgentGeneration() {
         String userAgent = GA4Analytics.builder().buildDefaultUserAgent();
         assertNotNull(userAgent);

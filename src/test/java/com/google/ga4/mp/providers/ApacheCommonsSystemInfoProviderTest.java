@@ -58,4 +58,56 @@ class ApacheCommonsSystemInfoProviderTest {
         assertEquals(osName1, osName2);
         assertEquals(osVersion1, osVersion2);
     }
+
+    @Test
+    void testGetDeviceCategory() {
+        ApacheCommonsSystemInfoProvider provider = new ApacheCommonsSystemInfoProvider();
+        String deviceCategory = provider.getDeviceCategory();
+
+        assertNotNull(deviceCategory);
+        assertEquals("desktop", deviceCategory);
+    }
+
+    @Test
+    void testGetLanguage() {
+        ApacheCommonsSystemInfoProvider provider = new ApacheCommonsSystemInfoProvider();
+        String language = provider.getLanguage();
+
+        assertNotNull(language);
+        assertFalse(language.isEmpty());
+        // Language should be in ISO 639-1 format, either "en" or "en-US" style
+        assertTrue(language.matches("^[a-z]{2}(-[A-Z]{2})?$"));
+    }
+
+    @Test
+    void testDeviceInfoDefaultMethods() {
+        ApacheCommonsSystemInfoProvider provider = new ApacheCommonsSystemInfoProvider();
+
+        // These should return null by default as they're not applicable for desktop Java apps
+        assertNull(provider.getScreenResolution());
+        assertNull(provider.getDeviceModel());
+        assertNull(provider.getDeviceBrand());
+        assertNull(provider.getBrowser());
+        assertNull(provider.getBrowserVersion());
+    }
+
+    @Test
+    void testAllDeviceInfoMethods() {
+        SystemInfoProvider provider = new ApacheCommonsSystemInfoProvider();
+
+        // OS info
+        assertNotNull(provider.getOsName());
+        assertNotNull(provider.getOsVersion());
+
+        // Device info
+        assertNotNull(provider.getDeviceCategory());
+        assertNotNull(provider.getLanguage());
+
+        // Optional device info (may be null)
+        provider.getScreenResolution();
+        provider.getDeviceModel();
+        provider.getDeviceBrand();
+        provider.getBrowser();
+        provider.getBrowserVersion();
+    }
 }
