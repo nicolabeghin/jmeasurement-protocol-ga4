@@ -2,6 +2,8 @@ package com.google.ga4.mp.providers;
 
 import org.apache.commons.lang3.SystemUtils;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.Locale;
 
 /**
@@ -41,5 +43,32 @@ public class ApacheCommonsSystemInfoProvider implements SystemInfoProvider {
             return language + "-" + country;
         }
         return language;
+    }
+
+    @Override
+    public String getScreenResolution() {
+        try {
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            return (int) screenSize.getWidth() + "x" + (int) screenSize.getHeight();
+        } catch (Exception e) {
+            // Return null if screen size cannot be determined (e.g., headless environment)
+            return null;
+        }
+    }
+
+    @Override
+    public String getDeviceModel() {
+        // For desktop Java applications, use OS name as device model
+        return getOsName();
+    }
+
+    @Override
+    public String getBrowser() {
+        return "Java";
+    }
+
+    @Override
+    public String getBrowserVersion() {
+        return System.getProperty("java.version");
     }
 }

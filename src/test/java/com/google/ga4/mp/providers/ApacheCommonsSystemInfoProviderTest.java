@@ -80,15 +80,55 @@ class ApacheCommonsSystemInfoProviderTest {
     }
 
     @Test
+    void testGetScreenResolution() {
+        ApacheCommonsSystemInfoProvider provider = new ApacheCommonsSystemInfoProvider();
+        String screenResolution = provider.getScreenResolution();
+
+        // Screen resolution may be null in headless environments (CI/CD)
+        // If not null, should be in WIDTHxHEIGHT format
+        if (screenResolution != null) {
+            assertTrue(screenResolution.matches("^\\d+x\\d+$"),
+                    "Screen resolution should be in WIDTHxHEIGHT format, got: " + screenResolution);
+        }
+    }
+
+    @Test
+    void testGetDeviceModel() {
+        ApacheCommonsSystemInfoProvider provider = new ApacheCommonsSystemInfoProvider();
+        String deviceModel = provider.getDeviceModel();
+
+        assertNotNull(deviceModel);
+        assertFalse(deviceModel.isEmpty());
+        // Device model should be same as OS name for desktop apps
+        assertEquals(provider.getOsName(), deviceModel);
+    }
+
+    @Test
+    void testGetBrowser() {
+        ApacheCommonsSystemInfoProvider provider = new ApacheCommonsSystemInfoProvider();
+        String browser = provider.getBrowser();
+
+        assertNotNull(browser);
+        assertEquals("Java", browser);
+    }
+
+    @Test
+    void testGetBrowserVersion() {
+        ApacheCommonsSystemInfoProvider provider = new ApacheCommonsSystemInfoProvider();
+        String browserVersion = provider.getBrowserVersion();
+
+        assertNotNull(browserVersion);
+        assertFalse(browserVersion.isEmpty());
+        // Should match Java version
+        assertEquals(System.getProperty("java.version"), browserVersion);
+    }
+
+    @Test
     void testDeviceInfoDefaultMethods() {
         ApacheCommonsSystemInfoProvider provider = new ApacheCommonsSystemInfoProvider();
 
-        // These should return null by default as they're not applicable for desktop Java apps
-        assertNull(provider.getScreenResolution());
-        assertNull(provider.getDeviceModel());
+        // Only device brand should be null (not applicable for desktop Java apps)
         assertNull(provider.getDeviceBrand());
-        assertNull(provider.getBrowser());
-        assertNull(provider.getBrowserVersion());
     }
 
     @Test

@@ -27,4 +27,22 @@ dependencies {
 
 test {
     useJUnitPlatform()
+
+    // Generate HTML test report
+    reports {
+        html.required = true
+        junitXml.required = true
+    }
+
+    // Show test results in console
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showStandardStreams = false
+    }
+
+    // Print HTML report location after tests
+    doLast {
+        println "HTML test report: file://${reports.html.outputLocation.get()}/index.html"
+    }
 }
